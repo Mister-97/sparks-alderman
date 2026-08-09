@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --navy: #0e1c40;
+  --navy-dark: #0a1530;
+  --red: #c8102e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-navy: var(--navy);
+  --color-navy-dark: var(--navy-dark);
+  --color-brand-red: var(--red);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
+  --font-mask: var(--font-anton);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+.text-mask {
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Playfair defaults to old-style figures, which drops the "7" below the
+   baseline. Force full-height lining figures. */
+.lining-figures {
+  font-variant-numeric: lining-nums;
+  font-feature-settings: "lnum" 1, "onum" 0;
+}
+
+/* Ambient background glows that drift slowly behind the priorities grid. */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, 8%, 0) scale(1.12);
+  }
+}
+
+.animate-drift-slow {
+  animation: drift 26s ease-in-out infinite;
+}
+
+.animate-drift-slower {
+  animation: drift 34s ease-in-out infinite reverse;
+}
+
+/* Radial spotlight that follows the cursor across a priority card. */
+.priority-spotlight {
+  background: radial-gradient(
+    22rem circle at var(--mx, 50%) var(--my, 50%),
+    rgba(65, 182, 230, 0.16) 0%,
+    rgba(65, 182, 230, 0.06) 35%,
+    transparent 65%
+  );
+}
+
+/* Stat pills: a highlight sweeps left-to-right on hover. */
+.stat-pill-sheen {
+  background: linear-gradient(
+    100deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+}
+
+.stat-pill:hover .stat-pill-sheen {
+  animation: pill-sheen 0.7s ease-out forwards;
+}
+
+@keyframes pill-sheen {
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* Stat chips scroll continuously on phones. Two identical copies sit side by
+   side, so shifting the track by half its width loops seamlessly. */
+@keyframes chip-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.chip-marquee {
+  animation: chip-marquee 24s linear infinite;
+}
+
+/* Photo strips reuse the same loop at a slower pace, and pause on
+   hover/focus so a visitor can actually look at a photo. */
+.photo-marquee {
+  animation: chip-marquee 50s linear infinite;
+}
+
+.photo-marquee:hover,
+.photo-marquee:focus-within {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift-slow,
+  .animate-drift-slower {
+    animation: none;
+  }
+
+  .chip-marquee,
+  .photo-marquee {
+    animation: none;
+  }
+
+  .stat-pill {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .stat-pill:hover {
+    transform: none;
+  }
+
+  .stat-pill:hover .stat-pill-sheen {
+    animation: none;
+  }
+}
