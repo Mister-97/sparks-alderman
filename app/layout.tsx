@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/images/og-image.jpg",
-        width: 1453,
-        height: 904,
-        alt: "Samuel Sparks for 7th Ward Alderman — Let's Spark a Change",
+        width: 1210,
+        height: 608,
+        alt: "Samuel Sparks for 7th Ward Alderman. Let's Spark a Change",
       },
     ],
   },
