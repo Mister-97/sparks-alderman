@@ -6,6 +6,7 @@ const TABLES: Record<string, string> = {
   volunteers: "volunteers",
   movement: "movement_signups",
   feedback: "feedback_messages",
+  pledges: "donors",
 };
 
 function toCsvValue(value: unknown) {

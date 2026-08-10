@@ -165,6 +165,56 @@ export function movementConfirmationEmail(firstName: string, joinAs: string) {
   );
 }
 
+export function donorTeamEmail(d: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  occupation: string;
+  employer: string;
+  frequency: string;
+  amount: string;
+}) {
+  return wrap(
+    "New Donation Pledge",
+    `
+    <table style="width:100%;border-collapse:collapse;">
+      ${row("Name", `${d.firstName} ${d.lastName}`)}
+      ${row("Amount", `${d.amount} (${d.frequency})`)}
+      ${row("Email", d.email)}
+      ${row("Phone", d.phone)}
+      ${row("Address", `${d.streetAddress}, ${d.city}, ${d.state} ${d.zipCode}`)}
+      ${row("Occupation", d.occupation)}
+      ${row("Employer", d.employer)}
+    </table>
+    `
+  );
+}
+
+export function donorConfirmationEmail(firstName: string, amount: string, frequency: string) {
+  return wrap(
+    "Thank You for Investing in the 7th Ward.",
+    `
+    <p style="font-size:14px;color:#374151;line-height:1.6;">
+      Hi ${firstName},
+    </p>
+    <p style="font-size:14px;color:#374151;line-height:1.6;">
+      Thank you for pledging ${amount} (${frequency.toLowerCase()}) to Samuel
+      Sparks for 7th Ward Alderman. A member of Team Sparks will follow up
+      shortly to complete your contribution.
+    </p>
+    <p style="font-size:14px;color:#374151;line-height:1.6;">
+      Contributions to Samuel Sparks for 7th Ward Alderman are not tax
+      deductible.
+    </p>
+    `
+  );
+}
+
 export function contactTeamEmail(c: {
   firstName?: string;
   lastName?: string;

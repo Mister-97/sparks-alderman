@@ -14,7 +14,7 @@ function fmt(d: string) {
 export default async function SignupsPage() {
   const supabase = getSupabaseAdmin();
 
-  const [volunteers, movement, contact, donorVolunteers, donorMovement] = await Promise.all([
+  const [volunteers, movement, contact, donorVolunteers, donorMovement, pledges] = await Promise.all([
     supabase
       .from("volunteers")
       .select("*")
@@ -38,6 +38,11 @@ export default async function SignupsPage() {
       .from("movement_signups")
       .select("id, created_at, first_name, last_name, email, phone")
       .eq("join_as", "Donor"),
+    supabase
+      .from("donors")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(100),
   ]);
 
   const donors = [
@@ -57,7 +62,70 @@ export default async function SignupsPage() {
       <section>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <h2 className="font-bold text-navy text-xl">
-            Donors ({donors.length})
+            Donation Pledges ({pledges.data?.length || 0})
+          </h2>
+          <a
+            href="/api/team/export?table=pledges"
+            className="text-xs font-bold tracking-wide text-brand-red hover:underline"
+          >
+            EXPORT CSV
+          </a>
+        </div>
+        <p className="text-neutral-500 text-xs mb-3 max-w-lg">
+          Submitted via the /donate form. Includes the compliance fields
+          (occupation, employer) required for individual contributions. These
+          are pledges, not completed charges, no payment processor is wired
+          up yet.
+        </p>
+        <div className="bg-white rounded-md border border-neutral-200 overflow-x-auto">
+          <table className="w-full text-sm min-w-[1000px]">
+            <thead>
+              <tr className="bg-neutral-50 text-left text-xs font-bold tracking-wide text-neutral-500 uppercase">
+                <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3">Name</th>
+                <th className="px-4 py-3">Amount</th>
+                <th className="px-4 py-3">Frequency</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Phone</th>
+                <th className="px-4 py-3">Address</th>
+                <th className="px-4 py-3">Occupation</th>
+                <th className="px-4 py-3">Employer</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(pledges.data || []).map((p) => (
+                <tr key={p.id} className="border-t border-neutral-100">
+                  <td className="px-4 py-3 text-neutral-500 whitespace-nowrap">{fmt(p.created_at)}</td>
+                  <td className="px-4 py-3 font-semibold text-navy whitespace-nowrap">
+                    {p.first_name} {p.last_name}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">{p.amount}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{p.frequency}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{p.email}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{p.phone}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {p.street_address}, {p.city}, {p.state} {p.zip_code}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">{p.occupation}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{p.employer}</td>
+                </tr>
+              ))}
+              {!pledges.data?.length && (
+                <tr>
+                  <td colSpan={9} className="px-4 py-6 text-center text-neutral-400">
+                    No pledges yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <h2 className="font-bold text-navy text-xl">
+            Donor Interest ({donors.length})
           </h2>
           <a
             href="/api/team/export?table=donors"

@@ -5,10 +5,27 @@ import { useSearchParams } from "next/navigation";
 
 const donationTiers = ["$15", "$50", "$100", "$150", "$250"];
 
+type Status = "idle" | "submitting" | "success" | "error";
+
 export default function DonateCard() {
   const searchParams = useSearchParams();
+  const [step, setStep] = useState<"amount" | "details">("amount");
   const [frequency, setFrequency] = useState<"once" | "monthly">("once");
   const [amount, setAmount] = useState<string | null>(null);
+  const [customAmount, setCustomAmount] = useState("");
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [employer, setEmployer] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const param = searchParams.get("amount");
@@ -20,6 +37,194 @@ export default function DonateCard() {
     const match = donationTiers.find((t) => t === `$${param}`);
     if (match) setAmount(match);
   }, [searchParams]);
+
+  const resolvedAmount = amount === "other" ? customAmount.trim() : amount;
+
+  function handleContinue() {
+    if (!resolvedAmount) return;
+    setStep("details");
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setStatus("submitting");
+
+    try {
+      const res = await fetch("/api/donate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          streetAddress,
+          city,
+          state,
+          zipCode,
+          occupation,
+          employer,
+          frequency: frequency === "monthly" ? "Monthly" : "One Time",
+          amount: resolvedAmount?.startsWith("$") ? resolvedAmount : `$${resolvedAmount}`,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+        setStatus("error");
+        return;
+      }
+
+      setStatus("success");
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div className="rounded-xl border border-navy/10 bg-white shadow-2xl shadow-navy/20 p-6 sm:p-8 md:p-10 text-center">
+        <h2 className="font-display font-bold text-navy text-2xl md:text-3xl leading-tight">
+          THANK YOU, {firstName.toUpperCase()}!
+        </h2>
+        <p className="mt-4 text-sm text-neutral-600 leading-relaxed">
+          We&apos;ve got your pledge of {resolvedAmount?.startsWith("$") ? resolvedAmount : `$${resolvedAmount}`}
+          {" "}({frequency === "monthly" ? "monthly" : "one time"}). Team Sparks
+          will follow up shortly to complete your contribution.
+        </p>
+      </div>
+    );
+  }
+
+  if (step === "details") {
+    return (
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-xl border border-navy/10 bg-white shadow-2xl shadow-navy/20 p-6 sm:p-8 md:p-10"
+      >
+        <button
+          type="button"
+          onClick={() => setStep("amount")}
+          className="text-xs font-bold tracking-wide text-neutral-500 hover:text-navy"
+        >
+          &larr; BACK
+        </button>
+
+        <h2 className="mt-4 font-display font-bold text-navy text-2xl md:text-3xl leading-tight text-center">
+          Your Information
+        </h2>
+        <p className="mt-2 text-center text-sm text-neutral-500">
+          {resolvedAmount?.startsWith("$") ? resolvedAmount : `$${resolvedAmount}`}
+          {" "}&middot;{" "}
+          {frequency === "monthly" ? "Monthly" : "One Time"}
+        </p>
+
+        <div className="mt-6 grid sm:grid-cols-2 gap-4">
+          <input
+            required
+            placeholder="First name *"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+          <input
+            required
+            placeholder="Last name *"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+          <input
+            required
+            type="email"
+            placeholder="E-mail *"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+          <input
+            required
+            type="tel"
+            placeholder="Phone *"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+          <input
+            required
+            placeholder="Street address *"
+            value={streetAddress}
+            onChange={(e) => setStreetAddress(e.target.value)}
+            className="sm:col-span-2 border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+          <input
+            required
+            placeholder="City *"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              required
+              placeholder="State *"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+            />
+            <input
+              required
+              placeholder="ZIP *"
+              value={zipCode}
+              onChange={(e) => setZipCode(e.target.value)}
+              className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+            />
+          </div>
+          <input
+            required
+            placeholder="Occupation *"
+            value={occupation}
+            onChange={(e) => setOccupation(e.target.value)}
+            className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+          <input
+            required
+            placeholder="Employer *"
+            value={employer}
+            onChange={(e) => setEmployer(e.target.value)}
+            className="border-b border-navy/20 text-navy placeholder-neutral-400 py-2 text-sm focus:outline-none focus:border-navy"
+          />
+        </div>
+
+        <p className="mt-4 text-[11px] text-neutral-400 leading-relaxed">
+          Federal and state law require political committees to use best
+          efforts to collect and report the occupation and employer of
+          individual contributors.
+        </p>
+
+        {error && (
+          <p className="mt-4 text-sm text-red-600 font-semibold">{error}</p>
+        )}
+
+        <button
+          type="submit"
+          disabled={status === "submitting"}
+          className="mt-6 w-full rounded-md bg-brand-red py-3.5 text-white text-sm font-bold transition-colors duration-300 hover:bg-red-700 disabled:opacity-60"
+        >
+          {status === "submitting" ? "SUBMITTING..." : "Submit Pledge"}
+        </button>
+
+        <p className="mt-5 text-center text-[11px] text-neutral-400 leading-relaxed">
+          This submits your contribution pledge to the campaign. Team Sparks
+          will follow up to complete payment. Contributions to Samuel Sparks
+          for 7th Ward Alderman are not tax deductible.
+        </p>
+      </form>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-navy/10 bg-white shadow-2xl shadow-navy/20 p-6 sm:p-8 md:p-10">
@@ -85,11 +290,30 @@ export default function DonateCard() {
             Other
           </button>
         </div>
+
+        {amount === "other" && (
+          <div className="mt-2.5 relative">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm font-bold">
+              $
+            </span>
+            <input
+              type="number"
+              min="1"
+              inputMode="decimal"
+              placeholder="Enter amount"
+              value={customAmount}
+              onChange={(e) => setCustomAmount(e.target.value)}
+              className="w-full rounded-md bg-neutral-100 py-3 pl-7 pr-3 text-sm font-bold text-navy placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-red"
+            />
+          </div>
+        )}
       </div>
 
       <button
         type="button"
-        className="mt-6 w-full rounded-md bg-brand-red py-3.5 text-white text-sm font-bold transition-colors duration-300 hover:bg-red-700"
+        onClick={handleContinue}
+        disabled={!resolvedAmount}
+        className="mt-6 w-full rounded-md bg-brand-red py-3.5 text-white text-sm font-bold transition-colors duration-300 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         Donate {frequency === "monthly" ? "Monthly" : "Now"}
       </button>

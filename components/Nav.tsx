@@ -16,11 +16,17 @@ const links = [
 
 export default function Nav({ dark = false }: { dark?: boolean }) {
   const [open, setOpen] = useState(false);
-  const textColor = dark ? "text-white" : "text-navy";
+  const textColor = dark || open ? "text-white" : "text-navy";
   const underlineColor = dark ? "bg-white" : "bg-navy";
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-40">
+    <header
+      className={`z-40 ${
+        open
+          ? "fixed inset-0 overflow-y-auto bg-navy"
+          : "absolute top-0 left-0 right-0"
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-6 py-6 flex items-center justify-between">
         <Link
           href="/#top"
@@ -83,7 +89,7 @@ export default function Nav({ dark = false }: { dark?: boolean }) {
       </div>
 
       {open && (
-        <div className="lg:hidden bg-navy text-white px-6 py-6 flex flex-col gap-1 shadow-xl">
+        <div className="lg:hidden text-white px-6 pb-10 flex flex-col gap-1">
           {links.map((l) => (
             <a
               key={l.label}
