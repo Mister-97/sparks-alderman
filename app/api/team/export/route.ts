@@ -28,40 +28,18 @@ export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get("table") || "";
   const supabase = getSupabaseAdmin();
 
-  let csv: string;
-
-  if (key === "donors") {
-    const [donorVolunteers, donorMovement] = await Promise.all([
-      supabase
-        .from("volunteers")
-        .select("created_at, first_name, last_name, email, phone")
-        .eq("join_as", "Donor"),
-      supabase
-        .from("movement_signups")
-        .select("created_at, first_name, last_name, email, phone")
-        .eq("join_as", "Donor"),
-    ]);
-
-    const rows = [
-      ...(donorVolunteers.data || []).map((d) => ({ ...d, source: "Volunteer Form" })),
-      ...(donorMovement.data || []).map((d) => ({ ...d, source: "Join the Movement" })),
-    ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-    csv = toCsv(rows);
-  } else {
-    const table = TABLES[key];
-    if (!table) {
-      return NextResponse.json({ error: "Unknown table." }, { status: 400 });
-    }
-
-    const { data, error } = await supabase
-      .from(table)
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    csv = toCsv(data || []);
+  const table = TABLES[key];
+  if (!table) {
+    return NextResponse.json({ error: "Unknown table." }, { status: 400 });
   }
+
+  const { data, error } = await supabase
+    .from(table)
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const csv = toCsv(data || []);
 
   return new NextResponse(csv, {
     headers: {

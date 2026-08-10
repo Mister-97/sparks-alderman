@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ChicagoStar } from "@/components/ChicagoStars";
 
@@ -19,12 +19,32 @@ export default function Nav({ dark = false }: { dark?: boolean }) {
   const textColor = dark || open ? "text-white" : "text-navy";
   const underlineColor = dark ? "bg-white" : "bg-navy";
 
+  useEffect(() => {
+    if (!open) return;
+    // Lock the page underneath so the fixed full-screen menu doesn't fight
+    // with body scroll, which on iOS Safari can leave the layout viewport
+    // visually shifted after the menu closes.
+    const scrollY = window.scrollY;
+    const { body } = document;
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    return () => {
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      window.scrollTo(0, scrollY);
+    };
+  }, [open]);
+
   return (
     <header
-      className={`z-40 ${
+      className={`${
         open
-          ? "fixed inset-0 overflow-y-auto bg-navy"
-          : "absolute top-0 left-0 right-0"
+          ? "fixed inset-0 z-[60] overflow-y-auto bg-navy"
+          : "absolute top-0 left-0 right-0 z-40"
       }`}
     >
       <div className="mx-auto max-w-7xl px-6 py-6 flex items-center justify-between">
