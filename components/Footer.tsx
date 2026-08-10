@@ -1,18 +1,25 @@
 import Image from "next/image";
 
 import ChicagoStars from "@/components/ChicagoStars";
+import { getSiteContent } from "@/lib/site-content";
 
 const links = [
   { label: "Meet Sam", href: "/meetsam-bio" },
   { label: "Our Mission", href: "/#mission" },
   { label: "Priorities", href: "/#issues" },
-  { label: "News", href: "/#news" },
-  { label: "Events", href: "/#events" },
+  { label: "News", href: "/news" },
+  { label: "Events", href: "/events" },
+  { label: "Volunteer", href: "/volunteer" },
   { label: "Join the Movement", href: "/#join" },
   { label: "Donate", href: "/donate" },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  const disclosure = await getSiteContent(
+    "disclosure",
+    "Paid for by Friends of Samuel."
+  );
+
   return (
     <footer className="bg-navy">
       <div className="mx-auto max-w-6xl px-6 pt-14 pb-8">
@@ -102,17 +109,46 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/50">
-            &copy; {new Date().getFullYear()} Samuel Sparks for 7th Ward
-            Alderman. All rights reserved.
-          </p>
-          <a
-            href="/#top"
-            className="text-xs text-white/50 transition-colors duration-300 hover:text-white"
-          >
-            Back to top &uarr;
-          </a>
+        <div className="mt-12 pt-6 border-t border-white/15">
+          <div className="space-y-1.5 max-w-2xl">
+            {disclosure.split(/\n\s*\n/).map((para: string, i: number) => (
+              <p key={i} className="text-xs text-white/50 leading-relaxed">
+                {para}
+              </p>
+            ))}
+          </div>
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-white/50">
+              &copy; {new Date().getFullYear()} Samuel Sparks for 7th Ward
+              Alderman. All rights reserved.
+            </p>
+            <div className="flex items-center gap-5">
+              <a
+                href="/privacy"
+                className="text-xs text-white/50 transition-colors duration-300 hover:text-white"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="/terms"
+                className="text-xs text-white/50 transition-colors duration-300 hover:text-white"
+              >
+                Terms of Use
+              </a>
+              <a
+                href="/team"
+                className="text-xs text-white/30 transition-colors duration-300 hover:text-white"
+              >
+                Team Portal
+              </a>
+              <a
+                href="/#top"
+                className="text-xs text-white/50 transition-colors duration-300 hover:text-white"
+              >
+                Back to top &uarr;
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

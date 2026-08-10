@@ -11,19 +11,27 @@ type Photo = { src: string; alt: string };
  * pauses on hover/focus, and on touch devices a tap can stick that
  * paused state with no way to keep browsing).
  */
-export default function PhotoMarquee({ photos }: { photos: Photo[] }) {
+export default function PhotoMarquee({
+  photos,
+  onPhotoClick,
+}: {
+  photos: Photo[];
+  onPhotoClick?: (photo: Photo) => void;
+}) {
   const [interacted, setInteracted] = useState(false);
 
   if (interacted) {
     return (
       <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {photos.map((p) => (
-          <div
+          <button
             key={p.src}
-            className="relative shrink-0 snap-start w-[70vw] sm:w-[40vw] aspect-[4/5] rounded-lg overflow-hidden shadow-sm"
+            type="button"
+            onClick={() => onPhotoClick?.(p)}
+            className="relative shrink-0 snap-start w-[70vw] sm:w-[40vw] aspect-[4/5] rounded-lg overflow-hidden shadow-sm text-left"
           >
             <Image src={p.src} alt={p.alt} fill sizes="70vw" className="object-cover" />
-          </div>
+          </button>
         ))}
       </div>
     );

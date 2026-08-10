@@ -10,7 +10,7 @@ const links = [
   { label: "OUR MISSION", href: "/#mission" },
   { label: "PRIORITIES", href: "/#issues" },
   { label: "NEWS", href: "/#news" },
-  { label: "VOLUNTEER", href: "https://forms.gle/APkCteyXzf3c8Sgz6", external: true },
+  { label: "VOLUNTEER", href: "/volunteer" },
   { label: "JOIN THE MOVEMENT", href: "/#join" },
 ];
 
@@ -37,8 +37,6 @@ export default function Nav({ dark = false }: { dark?: boolean }) {
               {i > 0 && <ChicagoStar className="w-3 h-3 mx-2 shrink-0" />}
               <a
                 href={l.href}
-                target={l.external ? "_blank" : undefined}
-                rel={l.external ? "noopener noreferrer" : undefined}
                 className={`group relative px-3 py-2 text-xs font-bold tracking-wide ${textColor}`}
               >
                 {l.label}
@@ -90,8 +88,6 @@ export default function Nav({ dark = false }: { dark?: boolean }) {
             <a
               key={l.label}
               href={l.href}
-              target={l.external ? "_blank" : undefined}
-              rel={l.external ? "noopener noreferrer" : undefined}
               onClick={() => setOpen(false)}
               className="py-3 border-b border-white/10 text-sm font-semibold tracking-wide"
             >

@@ -1,12 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 const donationTiers = ["$15", "$50", "$100", "$150", "$250"];
 
 export default function DonateCard() {
+  const searchParams = useSearchParams();
   const [frequency, setFrequency] = useState<"once" | "monthly">("once");
   const [amount, setAmount] = useState<string | null>(null);
+
+  useEffect(() => {
+    const param = searchParams.get("amount");
+    if (!param) return;
+    if (param === "other") {
+      setAmount("other");
+      return;
+    }
+    const match = donationTiers.find((t) => t === `$${param}`);
+    if (match) setAmount(match);
+  }, [searchParams]);
 
   return (
     <div className="rounded-xl border border-navy/10 bg-white shadow-2xl shadow-navy/20 p-6 sm:p-8 md:p-10">

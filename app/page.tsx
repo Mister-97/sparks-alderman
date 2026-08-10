@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Image from "next/image";
 import Nav from "@/components/Nav";
 import WardMarquee from "@/components/WardMarquee";
@@ -6,6 +8,11 @@ import ChicagoStars, { ChicagoStar } from "@/components/ChicagoStars";
 import Priorities from "@/components/Priorities";
 import VoteHereButton from "@/components/VoteHereButton";
 import Footer from "@/components/Footer";
+import JoinMovementForm from "@/components/JoinMovementForm";
+import ContactForm from "@/components/ContactForm";
+import EventsList from "@/components/EventsList";
+import HomeDonateWidget from "@/components/HomeDonateWidget";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const priorities = [
   {
@@ -95,8 +102,6 @@ const stats = [
   ["Economic", "Growth"],
   ["Business", "Sustainability"],
 ];
-
-const donationTiers = ["$15", "$50", "$100", "$150", "$250"];
 
 const otherNews = [
   { date: "Aug 4", title: "Sparks outlines small business plan for South Shore" },
@@ -213,7 +218,51 @@ function SectionBar({ light, bold }: { light: string; bold: string }) {
   );
 }
 
-export default function Home() {
+function shortDate(value: string) {
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+async function getContent() {
+  const supabase = getSupabaseAdmin();
+
+  const [eventsRes, newsRes] = await Promise.all([
+    supabase.from("events").select("*").order("event_date", { ascending: true }),
+    supabase.from("news_posts").select("*").order("sort_order", { ascending: true }),
+  ]);
+
+  const dbEvents = eventsRes.data?.length
+    ? eventsRes.data.slice(0, 3).map((e) => {
+        const d = new Date(`${e.event_date}T00:00:00`);
+        return {
+          day: d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase(),
+          date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }).toUpperCase(),
+          eventDate: e.event_date as string,
+          title: e.title,
+          where: e.location,
+          time: e.time,
+          description: e.description as string | null,
+        };
+      })
+    : events.map((e) => ({ ...e, eventDate: "", description: null as string | null }));
+
+  const newsPosts = (newsRes.data || []).filter((p) => p.show_on_homepage);
+  const featured = newsPosts.find((p) => p.featured) || newsPosts[0];
+  const rest = newsPosts.filter((p) => p.id !== featured?.id);
+  const dbOtherNews = rest.length
+    ? rest.slice(0, 5).map((p) => ({
+        slug: p.slug as string,
+        date: shortDate(p.published_date),
+        title: p.title,
+      }))
+    : otherNews.map((n) => ({ ...n, slug: "" }));
+
+  return { dbEvents, featured, dbOtherNews };
+}
+
+export default async function Home() {
+  const { dbEvents, featured, dbOtherNews } = await getContent();
   const maskDataUri = buildTextMaskDataUri(WIDE_MASK);
   const maskDataUriNarrow = buildTextMaskDataUri(NARROW_MASK);
   const maskVideoStyle = (uri: string) => ({
@@ -293,8 +342,8 @@ export default function Home() {
             <a href="/meetsam-bio" className="px-6 py-3 bg-navy text-white text-xs font-bold tracking-wide rounded-sm hover:bg-navy-dark transition-colors">
               LEARN MORE
             </a>
-            <a href="/myjob" className="px-6 py-3 bg-navy text-white text-xs font-bold tracking-wide rounded-sm hover:bg-navy-dark transition-colors">
-              MY JOB
+            <a href="/our-pillars" className="px-6 py-3 bg-navy text-white text-xs font-bold tracking-wide rounded-sm hover:bg-navy-dark transition-colors">
+              OUR PILLARS
             </a>
           </div>
         </div>
@@ -399,12 +448,12 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-6 p-5 sm:p-7">
               <article>
                 <p className="text-[11px] font-bold tracking-[0.12em] text-neutral-500">
-                  AUGUST 6, 2026
+                  {(featured?.published_date || "AUGUST 6, 2026").toUpperCase()}
                 </p>
                 <div className="mt-3 flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <span className="relative w-full h-40 sm:w-28 sm:h-24 shrink-0 border border-navy/12">
                     <Image
-                      src="/images/portrait.png"
+                      src={featured?.image_url || "/images/portrait.png"}
                       alt=""
                       aria-hidden="true"
                       fill
@@ -413,19 +462,15 @@ export default function Home() {
                     />
                   </span>
                   <h3 className="font-display font-bold text-navy text-xl leading-tight">
-                    Sparks Launches Campaign for 7th Ward Alderman
+                    {featured?.title || "Sparks Launches Campaign for 7th Ward Alderman"}
                   </h3>
                 </div>
                 <p className="mt-4 text-sm text-neutral-600 leading-relaxed">
-                  The 7th Ward deserves bold leadership focused on action,
-                  accountability, and long-term investment in our
-                  neighborhoods. Our community is filled with the talent,
-                  resilience, and potential to thrive. However, real progress
-                  requires leadership that is responsive and committed to
-                  delivering results.
+                  {featured?.excerpt ||
+                    "The 7th Ward deserves bold leadership focused on action, accountability, and long-term investment in our neighborhoods. Our community is filled with the talent, resilience, and potential to thrive. However, real progress requires leadership that is responsive and committed to delivering results."}
                 </p>
                 <a
-                  href="#mission"
+                  href={featured?.slug ? `/news/${featured.slug}` : "/news"}
                   className="mt-4 inline-block text-[12px] font-bold tracking-[0.12em] text-brand-red hover:underline"
                 >
                   CONTINUE READING
@@ -437,13 +482,13 @@ export default function Home() {
                   OTHER NEWS
                 </h3>
                 <ul className="mt-4 space-y-3.5">
-                  {otherNews.map((n) => (
+                  {dbOtherNews.map((n) => (
                     <li key={n.title} className="flex gap-4 text-sm">
-                      <span className="w-12 shrink-0 text-neutral-500">
+                      <span className="w-14 shrink-0 whitespace-nowrap text-neutral-500">
                         {n.date}
                       </span>
                       <a
-                        href="#news"
+                        href={n.slug ? `/news/${n.slug}` : "/news"}
                         className="text-navy leading-snug hover:text-brand-red transition-colors"
                       >
                         {n.title}
@@ -452,7 +497,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <a
-                  href="#news"
+                  href="/news"
                   className="mt-5 inline-block text-[12px] font-bold tracking-[0.12em] text-brand-red hover:underline"
                 >
                   VIEW ALL ARTICLES
@@ -464,41 +509,7 @@ export default function Home() {
           {/* Events */}
           <section id="events" className="rounded-lg border border-navy/12 shadow-xl shadow-navy/5 overflow-hidden">
             <SectionBar bold="SPARKS" light="EVENTS" />
-            <ul className="divide-y divide-navy/10">
-              {events.map((e) => (
-                <li
-                  key={e.title}
-                  className="group relative flex items-center gap-4 sm:gap-5 px-4 sm:px-7 py-4"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute left-0 top-0 h-full w-[3px] bg-brand-red origin-top scale-y-0 transition-transform duration-500 ease-out group-hover:scale-y-100"
-                  />
-                  <div className="w-16 shrink-0 text-center border border-navy/15 rounded-sm overflow-hidden">
-                    <p className="bg-navy text-white text-[10px] font-mask tracking-[0.14em] py-0.5">
-                      {e.day}
-                    </p>
-                    <p className="py-1.5 font-display font-bold text-navy text-sm lining-figures">
-                      {e.date}
-                    </p>
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-display font-bold text-navy text-lg leading-tight">
-                      {e.title}
-                    </h3>
-                    <p className="text-sm text-neutral-500 mt-0.5">
-                      {e.where} &middot; {e.time}
-                    </p>
-                  </div>
-                  <a
-                    href="#join"
-                    className="ml-auto hidden sm:inline-block text-[11px] font-bold tracking-[0.12em] text-brand-red hover:underline"
-                  >
-                    RSVP
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <EventsList events={dbEvents} />
           </section>
         </div>
       </section>
@@ -544,41 +555,7 @@ export default function Home() {
             </p>
           </div>
 
-          <form className="bg-navy-dark/40 p-6 sm:p-8 rounded-md">
-            <h3 className="text-white font-bold tracking-wide text-sm mb-6">
-              JOIN THE MOVEMENT
-            </h3>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <input
-                placeholder="First name *"
-                className="bg-transparent border-b border-white/40 text-white placeholder-white/50 py-2 text-sm focus:outline-none focus:border-white"
-              />
-              <input
-                placeholder="Last name *"
-                className="bg-transparent border-b border-white/40 text-white placeholder-white/50 py-2 text-sm focus:outline-none focus:border-white"
-              />
-              <input
-                placeholder="E-mail *"
-                className="bg-transparent border-b border-white/40 text-white placeholder-white/50 py-2 text-sm focus:outline-none focus:border-white"
-              />
-              <input
-                placeholder="Phone *"
-                className="bg-transparent border-b border-white/40 text-white placeholder-white/50 py-2 text-sm focus:outline-none focus:border-white"
-              />
-              <select className="sm:col-span-2 bg-transparent border-b border-white/40 text-white/70 py-2 text-sm focus:outline-none focus:border-white">
-                <option className="text-black">Join as</option>
-                <option className="text-black">Volunteer</option>
-                <option className="text-black">Supporter</option>
-                <option className="text-black">Donor</option>
-              </select>
-            </div>
-            <button
-              type="submit"
-              className="mt-8 px-8 py-3 bg-brand-red text-white text-xs font-bold tracking-wide rounded-sm hover:bg-red-700 transition-colors"
-            >
-              SUBMIT
-            </button>
-          </form>
+          <JoinMovementForm />
         </div>
       </section>
 
@@ -703,31 +680,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div>
-            <div className="grid grid-cols-3 gap-2.5">
-              {donationTiers.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className="rounded-md bg-neutral-100 py-3.5 font-bold text-navy text-sm lining-figures transition-colors duration-300 hover:bg-brand-red hover:text-white"
-                >
-                  {t}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="rounded-md bg-neutral-100 py-3.5 font-bold text-navy text-sm transition-colors duration-300 hover:bg-brand-red hover:text-white"
-              >
-                Other
-              </button>
-            </div>
-            <button
-              type="button"
-              className="mt-2.5 w-full rounded-md bg-brand-red py-3.5 text-white text-sm font-bold transition-colors duration-300 hover:bg-red-700"
-            >
-              Donate Now
-            </button>
-          </div>
+          <HomeDonateWidget />
         </div>
       </section>
 
@@ -747,40 +700,7 @@ export default function Home() {
           </p>
         </div>
 
-        <form className="bg-neutral-100 p-6 sm:p-8 rounded-md">
-          <h3 className="font-display font-bold text-navy text-2xl mb-6 text-center">
-            Your Voice Matters.
-          </h3>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <input
-              placeholder="First name"
-              className="bg-white border border-neutral-300 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-navy"
-            />
-            <input
-              placeholder="Last name"
-              className="bg-white border border-neutral-300 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-navy"
-            />
-            <input
-              placeholder="Address *"
-              className="sm:col-span-2 bg-white border border-neutral-300 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-navy"
-            />
-            <input
-              placeholder="Email *"
-              className="sm:col-span-2 bg-white border border-neutral-300 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-navy"
-            />
-            <textarea
-              placeholder="Message"
-              rows={4}
-              className="sm:col-span-2 bg-white border border-neutral-300 rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-navy"
-            />
-          </div>
-          <button
-            type="submit"
-            className="mt-6 w-full py-3 bg-brand-red text-white text-xs font-bold tracking-wide rounded-sm hover:bg-red-700 transition-colors"
-          >
-            Submit
-          </button>
-        </form>
+        <ContactForm />
       </section>
 
       <Footer />

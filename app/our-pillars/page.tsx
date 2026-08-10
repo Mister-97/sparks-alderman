@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -5,9 +7,9 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import ChicagoStars from "@/components/ChicagoStars";
 import Footer from "@/components/Footer";
-import PhotoMarquee from "@/components/PhotoMarquee";
+import PhotoGallery from "@/components/PhotoGallery";
 
-const TITLE = "My Job | Samuel Sparks for 7th Ward Alderman";
+const TITLE = "Our Pillars | Samuel Sparks for 7th Ward Alderman";
 const DESCRIPTION =
   "What an Alderman actually does for the 7th Ward. The bridge between residents and City Hall.";
 
@@ -115,7 +117,7 @@ const gallery = [
   { src: "/images/gallery-11.jpg", alt: "A young Samuel Sparks with classmates in South Shore" },
 ];
 
-export default function MyJob() {
+export default function OurPillars() {
   return (
     <main id="top" className="flex flex-col">
       {/* HERO */}
@@ -252,34 +254,7 @@ export default function MyJob() {
           </h2>
         </div>
 
-        {/* Desktop: bento grid */}
-        <div className="hidden md:block mx-auto max-w-6xl px-6">
-          <div className="mt-10 grid grid-cols-4 auto-rows-[12rem] grid-flow-dense gap-4">
-            {gallery.map((g, i) => (
-              <div
-                key={g.src}
-                className={`group relative overflow-hidden rounded-sm ${
-                  i === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"
-                }`}
-              >
-                <Image
-                  src={g.src}
-                  alt={g.alt}
-                  fill
-                  sizes="25vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile: autoscrolling marquee that becomes a swipeable carousel
-            on the first touch, instead of freezing there. */}
-        <div className="md:hidden mt-10 px-6">
-          <PhotoMarquee photos={gallery} />
-        </div>
+        <PhotoGallery gallery={gallery} />
       </section>
 
       {/* CTA */}

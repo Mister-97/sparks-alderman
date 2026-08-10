@@ -1,10 +1,15 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import Image from "next/image";
+import { Suspense } from "react";
 
 import Nav from "@/components/Nav";
 import ChicagoStars from "@/components/ChicagoStars";
 import Footer from "@/components/Footer";
 import DonateCard from "@/components/DonateCard";
+import PolicyContent from "@/components/PolicyContent";
+import { getSiteContent } from "@/lib/site-content";
 
 const TITLE = "Donate | Samuel Sparks for 7th Ward Alderman";
 const DESCRIPTION =
@@ -20,7 +25,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Donate() {
+export default async function Donate() {
+  const [disclosure, contributionRules] = await Promise.all([
+    getSiteContent("disclosure", "Paid for by Friends of Samuel."),
+    getSiteContent("contribution_rules", ""),
+  ]);
+
   return (
     <main id="top" className="flex flex-col">
       {/* HERO / DONATE CARD. Skyline backdrop, same treatment as the
@@ -54,8 +64,30 @@ export default function Donate() {
           </p>
         </div>
 
+        <div className="relative z-10 mx-auto max-w-3xl w-full px-6 pb-10 md:pb-16">
+          <Suspense fallback={null}>
+            <DonateCard />
+          </Suspense>
+        </div>
+
         <div className="relative z-10 mx-auto max-w-3xl w-full px-6 pb-16 md:pb-24">
-          <DonateCard />
+          <div className="rounded-xl border border-navy/10 bg-white/95 shadow-lg shadow-navy/10 p-6 sm:p-8">
+            <p className="text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase mb-3">
+              Campaign Disclosure
+            </p>
+            <div className="space-y-2 text-sm text-neutral-600 leading-relaxed">
+              {disclosure.split(/\n\s*\n/).map((para: string, i: number) => (
+                <p key={i}>{para}</p>
+              ))}
+            </div>
+
+            {contributionRules && (
+              <PolicyContent
+                text={contributionRules}
+                className="mt-6 pt-6 border-t border-navy/10 space-y-3 text-sm text-neutral-600 leading-relaxed [&_h2]:text-base [&_h2]:pt-0"
+              />
+            )}
+          </div>
         </div>
       </section>
 
