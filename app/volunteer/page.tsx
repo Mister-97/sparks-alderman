@@ -43,7 +43,7 @@ export default function Volunteer() {
 
         <div className="mx-auto max-w-4xl w-full px-6 pt-32 md:pt-44 pb-8 md:pb-10 text-center">
           <p className="font-sans font-extrabold tracking-tight text-navy text-base md:text-xl lg:text-2xl">
-            <span className="italic text-brand-red">SPARKS</span> FOR CHICAGO:
+            <span className="italic text-brand-red">SPARKS</span>&ensp;FOR CHICAGO:
           </p>
           <ChicagoStars className="justify-center mt-4 mb-6" starClassName="w-3.5 h-3.5 md:w-4 md:h-4" />
           <Image
