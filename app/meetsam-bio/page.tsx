@@ -94,40 +94,60 @@ export default function MeetSamBio() {
           </div>
 
           <p className="mt-8 text-sm md:text-base text-neutral-600 leading-loose first-letter:font-display first-letter:font-bold first-letter:text-navy first-letter:text-6xl md:first-letter:text-7xl first-letter:mr-3 first-letter:float-left first-letter:leading-[0.85]">
-            Samuel C. Sparks was born and raised in South Shore, and that
-            foundation has never left him. For more than 15 years, he has
-            built his life around service to others. The values that guide
-            him today were instilled in him by his family, his career, and
-            his lived experiences. For Samuel, service means showing up,
-            listening, and taking action where it matters most.
+            Samuel C. Sparks was born and raised in South Shore, where he
+            attended Horace Mann Elementary School and South Shore High
+            School. He knows both the promise and the pain of this community
+            firsthand. Having experienced homelessness and hardship himself,
+            Samuel leaned on his faith to see beyond his circumstances and
+            build a life rooted in purpose. That faith still guides how he
+            lives, serves, and leads.
           </p>
           <p className="mt-6 text-sm md:text-base text-neutral-600 leading-loose">
-            Spending more than a decade under Steve Harvey&rsquo;s tutelage,
-            and his stylist, gave Samuel rare insight into what it takes to
-            turn vision into reality through discipline, perseverance, and
-            efficient execution. He brought those lessons back to the
-            communities that shaped him, opening doors for the next
-            generation. His impact extends across the nation through
-            partnerships with the Steve Harvey Foundation, Chicago Public
-            Schools, the Cook County Juvenile Justice System, and Florida
-            youth detention centers. For their future and ours, Samuel is
-            done with excuses, done with disinvestment, and committed to
-            fight for the opportunities every neighborhood deserves.
+            For more than fifteen years, Samuel has poured that purpose into
+            others. His work has reached more than 5,000 young people
+            through schools, faith institutions, juvenile justice
+            facilities, and youth programs. He has worked with Chicago
+            Public Schools, the Cook County Juvenile Justice System, youth
+            detention facilities, and the Steve Harvey Foundation, helping
+            young people see beyond their circumstances and recognize what
+            is possible for their lives.
+          </p>
+          <p className="mt-6 text-sm md:text-base text-neutral-600 leading-loose">
+            Samuel brought that same purpose into business. After nearly a
+            decade under Steve Harvey&rsquo;s tutelage and as his stylist, he
+            built Legacy Living across multiple states and later created The
+            Brew. Through his Youth First employment philosophy, young
+            people gain jobs, mentorship, real business experience, and
+            greater responsibility. He believes business should not only
+            build wealth. It should build people and strengthen communities.
+          </p>
+          <p className="mt-6 text-sm md:text-base text-neutral-600 leading-loose">
+            When Samuel returned home, he put his belief in South Shore into
+            action, investing more than $3.8 million of his own money into
+            the community. Even after The Brew was robbed twelve times, he
+            stayed and kept building. But he also came home to many of the
+            same problems he remembered growing up. Businesses had
+            disappeared, streets remained neglected, and too many families
+            were still waiting for progress they could actually feel.
           </p>
 
           <blockquote className="mt-10 pl-6 border-l-4 border-brand-red">
             <p className="font-display font-bold text-navy text-xl md:text-2xl leading-snug">
-              This campaign is not about opposition. It&rsquo;s about
-              defiance. This campaign is about the people of the 7th Ward.
+              South Shore thrives when we all thrive. Misled leadership has
+              stunted our growth and weighed on our spirits. This is not a
+              political race, this is an impact race with one goal in mind:
+              restoring our community&rsquo;s heart posture.
             </p>
           </blockquote>
 
           <p className="mt-10 text-sm md:text-base text-neutral-600 leading-loose">
-            As a founder of a coffee house operating globally and a
-            recipient of the Presidential Lifetime Achievement Award,
-            recognition has never been the goal. Samuel is running for
-            Alderman because he&rsquo;s seen firsthand the consequences of
-            community concerns going unheard.
+            Samuel believes change begins when we decide we want better and
+            are willing to do the work to make it happen. He is running to
+            restore hope, protect the people who built this community, and
+            create opportunity for the next generation. For Samuel, this is
+            bigger than winning a seat. It is an impact race rooted in
+            faith, accountable through action, and driven by a simple
+            belief: we are the answer we&rsquo;ve been waiting for.
           </p>
 
         </div>

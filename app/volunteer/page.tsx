@@ -42,6 +42,10 @@ export default function Volunteer() {
         />
 
         <div className="mx-auto max-w-4xl w-full px-6 pt-32 md:pt-44 pb-8 md:pb-10 text-center">
+          <p className="font-sans font-extrabold tracking-tight text-navy text-base md:text-xl lg:text-2xl">
+            SPARKS FOR CHICAGO:
+          </p>
+          <ChicagoStars className="justify-center mt-4 mb-6" starClassName="w-3.5 h-3.5 md:w-4 md:h-4" />
           <Image
             src="/images/logo-lockup-navy.png"
             alt="Samuel Sparks for 7th Ward Alderman, Let's Spark a Change"
@@ -49,10 +53,7 @@ export default function Volunteer() {
             height={700}
             className="w-full max-w-md mx-auto h-auto mb-6"
           />
-          <ChicagoStars className="justify-center mb-4" starClassName="w-3.5 h-3.5 md:w-4 md:h-4" />
           <h1 className="font-display font-bold text-navy text-4xl sm:text-5xl md:text-6xl leading-tight">
-            Sparks For Chicago:
-            <br />
             Volunteer Sign Up
           </h1>
           <p className="mt-6 max-w-xl mx-auto text-sm md:text-base text-neutral-600 leading-relaxed">
@@ -62,7 +63,7 @@ export default function Volunteer() {
             you&apos;re knocking on doors, making phone calls, helping at
             events, talking with neighbors, or lending a hand behind the
             scenes, every contribution makes a difference. We are grateful to
-            have you on the team.
+            have you be part of our team.
           </p>
         </div>
 

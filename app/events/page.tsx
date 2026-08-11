@@ -78,6 +78,9 @@ export default async function EventsPage() {
 
         <div className="relative z-10 mx-auto max-w-3xl w-full px-6 pb-16 md:pb-24">
           <PublicEventCalendar events={events} />
+          <p className="mt-8 text-center text-sm text-neutral-500">
+            Stay tuned for future events.
+          </p>
         </div>
       </section>
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-const donationTiers = ["$15", "$50", "$100", "$150", "$250"];
+const donationTiers = ["$5", "$20", "$50", "$100", "$250"];
 
 type Status = "idle" | "submitting" | "success" | "error";
 

@@ -16,78 +16,48 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const priorities = [
   {
-    title: "ECONOMIC REVITALIZATION",
-    body: "Strong local businesses create jobs, strengthen neighborhoods, and keep investment within the community.",
-    full: "Strong local businesses create jobs, strengthen neighborhoods, and keep investment within the community. The 7th Ward is filled with entrepreneurs, workers, and small business owners who deserve support and access to opportunities that help them grow and succeed. Revitalizing commercial corridors and supporting local economic development will help attract investment, create jobs, and build long-term stability throughout the ward.",
+    title: "COMMUNITY INCLUSIVITY",
+    body: "A strong ward is built on shared responsibility. Real progress happens when residents and leaders work together to deliver solutions, not stand apart from each other.",
+    full: "A strong ward is built on shared responsibility. We all have a role in serving one another and caring for the neighborhoods we call home. More than ten years of service has shown that real progress happens when residents and leaders work together to deliver solutions. Leadership should not stand apart from the community. It should be part of the work.\n\nWe will build on programs that serve our neighbors and expand what is working across the ward. That means investing in youth mentorship and development that prepares young people for careers, adulthood, and leadership. It means improving mental health support and crisis response training for families and community members. We will continue supporting violence prevention efforts that connect young people to safety and opportunity. We will care for public spaces where everyone feels welcome and create inclusive environments where entrepreneurs can grow, and neighbors can gather. Every person deserves a ward where they feel supported and share responsibility for the future we are building together.",
     priorities: [
-      "Support local business growth through corridor revitalization",
-      "Attract investment to vacant storefronts and commercial spaces",
-      "Expand access to workforce development and entrepreneurship resources",
+      "Expand youth mentorship and development that prepares young people for careers and leadership",
+      "Improve mental health support and crisis response training for families and community members",
+      "Support violence prevention efforts that connect young people to safety and opportunity",
     ],
     impact: [
-      "Local business growth creates jobs, economic stability, and keeps tax dollars circulating in the 7th Ward",
-      "Revitalized corridors increase neighborhood activity, walkability, and attract spenders",
-      "Stronger businesses help keep resources circulating within the ward",
+      "Shared responsibility strengthens neighborhoods and builds trust between residents and leaders",
+      "Better mental health and crisis resources protect families in moments of need",
+      "Inclusive public spaces and business environments bring neighbors together",
     ],
   },
   {
-    title: "PUBLIC SAFETY",
-    body: "Every resident deserves to feel safe inside and outside their homes. Public safety is about more than emergency response.",
-    full: "Every resident deserves to feel safe in their home, on their block, and throughout the community. Public safety is about more than emergency response. It is about creating neighborhoods where families feel supported, businesses can operate confidently, and young people have opportunities to succeed. Strengthening safety in the 7th Ward requires collaboration between residents, community organizations, and local leadership to address the root causes of crime while improving the overall quality of life throughout the ward.",
+    title: "LEVERAGING RESOURCES",
+    body: "Our community has resources, talent, and institutions that can do more when they work toward the same goal, becoming known as a community that takes care of its own.",
+    full: "Our community has resources, talent, and institutions that can do more when they work toward the same goal. We are committed to making the 7th Ward known as the community that takes care of its community. We intend to use our Special Service Areas, or SSAs, to their full capacity so the resources generated in our business corridors return to the people, places, and businesses they are meant to support.\n\nEach SSA should serve as part of one connected engine for the ward. We will leverage these resources to keep streets clean, improve beautification, support safer commercial corridors, and create economic opportunity for people who live here. Businesses should be able to see how their contributions improve the blocks around them as well as the mental, physical, and spiritual health of our communities. Our neighborhoods deserve resources that focus on their direct and essential needs. Through collaboration and strategic planning, we can make every available dollar work harder for our ward.",
     priorities: [
-      "Improve street lighting, sanitation, and neighborhood maintenance",
-      "Support violence prevention initiatives and youth outreach programs",
-      "Increase responsiveness to resident and public safety concerns",
+      "Use our Special Service Areas (SSAs) to their full capacity for the corridors that generate them",
+      "Keep streets clean, improve beautification, and support safer commercial corridors",
+      "Align SSAs into one connected engine for the whole ward through collaboration and strategic planning",
     ],
     impact: [
-      "Cleaner and safer streets instill communal pride and increase constituent engagement",
-      "Better lighting and maintained public spaces help reduce unsafe activity",
-      "Youth outreach programs create positive opportunities for young residents",
+      "Business contributions translate into visible improvements on the blocks around them",
+      "Every available dollar works harder for the people, places, and businesses it's meant to support",
+      "Stronger corridors support the physical, mental, and spiritual health of our communities",
     ],
   },
   {
-    title: "YOUTH EMPOWERMENT",
-    body: "Investing in the younger generation is essential to building a stronger future for the 7th Ward.",
-    full: "Investing in young people is essential to building a stronger future for the 7th Ward. Expanding access to mentorship, workforce training, and employment opportunities helps prepare young residents for long-term success while strengthening families and communities. Creating positive pathways for youth development is an investment in safer, more stable neighborhoods for generations to come.",
+    title: "COMMUNITY OWNERSHIP",
+    body: "The people who live here should have the chance to buy homes on their block, build wealth, and invest in their own neighborhood.",
+    full: "I believe the people who live here should have the chance to buy homes on their block, build wealth, and invest in their own neighborhood. Our culture lives in the places that bring us together: our churches, local businesses, gathering spaces, and the seniors who carry our history and pass it down to the next generation.\n\nNew investment should benefit the community, not make it harder for residents to stay through higher property taxes, rising rents, or higher costs of living. Development is not progress if the people and businesses that helped build this neighborhood are pushed out. It is not successful if families still have to leave the community to find the things they need or the places they want to enjoy.\n\nWe support growth that respects where we have come from, protects the neighbors who are here today, and opens doors for the future. Progress should happen alongside our community, not at its expense.",
     priorities: [
-      "Expand youth employment and mentorship opportunities",
-      "Support workforce training and career readiness programs",
-      "Partner with organizations that create safe and productive youth spaces",
+      "Help residents buy homes on their block and build lasting wealth here",
+      "Protect residents from being priced out through higher property taxes, rents, and cost of living",
+      "Support development that respects our history and protects the neighbors who are here today",
     ],
     impact: [
-      "Workforce opportunities create pathways to long-term careers and a skilled workforce",
-      "Mentorship programs strengthen confidence and leadership skills",
-      "Youth engagement helps reduce barriers and increase community stability",
-    ],
-  },
-  {
-    title: "COMMUNITY WELLNESS",
-    body: "Residents deserve city services that are efficient, responsive, and focused on the needs of the community.",
-    full: "Residents deserve city services that are efficient, responsive, and focused on the needs of the community. From potholes and sanitation to vacant lots and infrastructure maintenance, everyday city services directly impact the quality of life across the ward. Leadership should be accessible, transparent, and committed to ensuring residents receive the services and attention their neighborhoods deserve.",
-    priorities: [
-      "Improve response times for city services and neighborhood concerns",
-      "Address sanitation, infrastructure, and maintenance issues consistently",
-      "Increase communication and transparency with residents",
-    ],
-    impact: [
-      "Faster city services improve neighborhood conditions",
-      "Cleaner streets and maintained infrastructure strengthen community pride",
-      "Greater transparency helps residents stay informed and engaged",
-    ],
-  },
-  {
-    title: "NEIGHBORHOOD RESTORATION",
-    body: "Neighborhood corridors and public spaces should reflect the pride, culture, and strength of the 7th Ward.",
-    full: "Neighborhood corridors and public spaces should reflect the pride, culture, and strength of the 7th Ward. Investing in beautification, walkability, and community spaces helps improve quality of life, attract investment, and create welcoming environments for residents, families, and businesses. Strong public spaces help build stronger connections across the community.",
-    priorities: [
-      "Beautify commercial corridors and public spaces",
-      "Support community events and neighborhood engagement initiatives",
-      "Improve cleanliness, walkability, and accessibility throughout the ward",
-    ],
-    impact: [
-      "Improved public spaces encourage community activity and investment",
-      "Beautification efforts strengthen neighborhood pride",
-      "Stronger corridors help attract businesses and long-term development",
+      "Homeownership keeps culture, churches, businesses, and seniors' history rooted in the ward",
+      "Responsible development lets families stay and enjoy what they helped build",
+      "Growth alongside the community creates progress without pushing anyone out",
     ],
   },
 ];
@@ -113,7 +83,14 @@ const otherNews = [
 
 const events = [
   {
-    day: "THU",
+    day: "FRI",
+    date: "AUG 14",
+    title: "The Brew University Community Block Party",
+    where: "The Brew Coffee Shop",
+    time: "10:00 AM",
+  },
+  {
+    day: "FRI",
     date: "AUG 14",
     title: "Community Town Hall",
     where: "South Shore Cultural Center",
@@ -233,7 +210,7 @@ async function getContent() {
   ]);
 
   const dbEvents = eventsRes.data?.length
-    ? eventsRes.data.slice(0, 3).map((e) => {
+    ? eventsRes.data.slice(0, 4).map((e) => {
         const d = new Date(`${e.event_date}T00:00:00`);
         return {
           day: d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase(),
@@ -343,7 +320,7 @@ export default async function Home() {
               LEARN MORE
             </a>
             <a href="/our-pillars" className="px-6 py-3 bg-navy text-white text-xs font-bold tracking-wide rounded-sm hover:bg-navy-dark transition-colors">
-              OUR PILLARS
+              WHAT IS AN ALDERMAN
             </a>
           </div>
         </div>
@@ -370,7 +347,7 @@ export default async function Home() {
           className="h-10 md:h-12 w-auto mx-auto mb-3"
         />
         <h2 className="font-display font-bold text-navy text-3xl md:text-4xl">
-          Our Mission
+          A New Beat for the 7th Ward
         </h2>
 
         <ChicagoStars
@@ -378,15 +355,14 @@ export default async function Home() {
           starClassName="w-3.5 h-3.5 md:w-4 md:h-4"
         />
         <p className="mt-6 text-sm md:text-base text-neutral-700 leading-relaxed">
-          The 7th Ward deserves bold leadership focused on action,
-          accountability, and long-term investment in our neighborhoods. Our
-          community is filled with the talent, resilience, and potential to
-          thrive. However, real progress requires leadership that is
-          responsive and committed to delivering results. Essential to local
-          leadership, and at the foundation of change, is supporting our
-          local businesses, investing in youth, improving city services, and
-          revitalizing commercial corridors. Together we can build a safer,
-          cleaner, and more connected 7th Ward.
+          My mission is to restore hope, protect the people who built our
+          community, and lead with compassion, character, and conviction. I
+          will be a voice for residents, not above them, creating
+          opportunity for young people, supporting families and local
+          businesses, and ensuring progress happens with our community, not
+          at its expense. Guided by faith and accountable through action, I
+          will serve as an example of what is possible when we choose each
+          other and refuse to leave anyone behind.
         </p>
       </MissionDome>
 

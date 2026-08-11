@@ -87,7 +87,7 @@ function PriorityModal({
         <h3 className="mt-2 font-mask uppercase text-navy text-2xl md:text-3xl tracking-[0.04em] leading-tight pr-10">
           {item.title}
         </h3>
-        <p className="mt-5 text-sm md:text-base text-neutral-600 leading-relaxed">
+        <p className="mt-5 text-sm md:text-base text-neutral-600 leading-relaxed whitespace-pre-line">
           {item.full}
         </p>
 
@@ -147,10 +147,10 @@ export default function Priorities({ items }: { items: readonly Priority[] }) {
         >
           <ChicagoStars starClassName="w-3.5 h-3.5 md:w-4 md:h-4" />
           <h2 className="mt-4 font-display font-bold text-navy text-4xl md:text-5xl">
-            Our Priorities
+            The Heart of Our Priorities
           </h2>
           <p className="mt-4 text-sm md:text-base text-neutral-600 max-w-xl leading-relaxed">
-            Five commitments driving the work across South Shore, Calumet
+            Three commitments driving the work across South Shore, Calumet
             Heights, South Chicago and South Deering.
           </p>
         </motion.div>

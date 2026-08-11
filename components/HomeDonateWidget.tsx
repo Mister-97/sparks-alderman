@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const donationTiers = ["$15", "$50", "$100", "$150", "$250"];
+const donationTiers = ["$5", "$20", "$50", "$100", "$250"];
 
 export default function HomeDonateWidget() {
   const [amount, setAmount] = useState<string | null>(null);
