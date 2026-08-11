@@ -5,6 +5,9 @@ import { useSearchParams } from "next/navigation";
 
 const donationTiers = ["$5", "$20", "$50", "$100", "$250"];
 
+const PAYPAL_DONATE_URL =
+  "https://www.paypal.com/donate/?hosted_button_id=Q52DNDGAFYFPW";
+
 type Status = "idle" | "submitting" | "success" | "error";
 
 export default function DonateCard() {
@@ -85,6 +88,11 @@ export default function DonateCard() {
   }
 
   if (status === "success") {
+    const numericAmount = (resolvedAmount || "").replace(/[^0-9.]/g, "");
+    const paypalHref = `${PAYPAL_DONATE_URL}${
+      numericAmount ? `&amount=${encodeURIComponent(numericAmount)}` : ""
+    }`;
+
     return (
       <div className="rounded-xl border border-navy/10 bg-white shadow-2xl shadow-navy/20 p-6 sm:p-8 md:p-10 text-center">
         <h2 className="font-display font-bold text-navy text-2xl md:text-3xl leading-tight">
@@ -92,9 +100,24 @@ export default function DonateCard() {
         </h2>
         <p className="mt-4 text-sm text-neutral-600 leading-relaxed">
           We&apos;ve got your pledge of {resolvedAmount?.startsWith("$") ? resolvedAmount : `$${resolvedAmount}`}
-          {" "}({frequency === "monthly" ? "monthly" : "one time"}). Team Sparks
-          will follow up shortly to complete your contribution.
+          {" "}({frequency === "monthly" ? "monthly" : "one time"}). One last
+          step, complete your contribution securely through PayPal below
+          (you&apos;ll enter the amount again on PayPal&apos;s page).
         </p>
+        <a
+          href={paypalHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-6 inline-block w-full rounded-md bg-brand-red py-3.5 text-white text-sm font-bold transition-colors duration-300 hover:bg-red-700"
+        >
+          Complete Donation via PayPal
+        </a>
+        {frequency === "monthly" && (
+          <p className="mt-3 text-[11px] text-neutral-400 leading-relaxed">
+            For monthly gifts, choose the recurring option on the PayPal
+            page.
+          </p>
+        )}
       </div>
     );
   }
@@ -218,9 +241,9 @@ export default function DonateCard() {
         </button>
 
         <p className="mt-5 text-center text-[11px] text-neutral-400 leading-relaxed">
-          This submits your contribution pledge to the campaign. Team Sparks
-          will follow up to complete payment. Contributions to Samuel Sparks
-          for 7th Ward Alderman are not tax deductible.
+          After submitting, you&apos;ll be sent to PayPal to complete your
+          contribution securely. Contributions to Samuel Sparks for 7th Ward
+          Alderman are not tax deductible.
         </p>
       </form>
     );

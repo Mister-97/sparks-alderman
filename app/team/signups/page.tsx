@@ -60,9 +60,10 @@ export default async function SignupsPage() {
         </div>
         <p className="text-neutral-500 text-xs mb-3 max-w-lg">
           Submitted via the /donate form. Includes the compliance fields
-          (occupation, employer) required for individual contributions. These
-          are pledges, not completed charges, no payment processor is wired
-          up yet.
+          (occupation, employer) required for individual contributions. After
+          submitting, the donor is sent to PayPal to complete payment, check
+          your PayPal account to confirm which of these actually came
+          through.
         </p>
         <div className="bg-white rounded-md border border-neutral-200 overflow-x-auto">
           <table className="w-full text-sm min-w-[1000px]">

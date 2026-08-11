@@ -147,7 +147,10 @@ export default function MeetSamBio() {
             create opportunity for the next generation. For Samuel, this is
             bigger than winning a seat. It is an impact race rooted in
             faith, accountable through action, and driven by a simple
-            belief: we are the answer we&rsquo;ve been waiting for.
+            belief:{" "}
+            <strong className="font-bold text-navy">
+              we are the answer we&rsquo;ve been waiting for.
+            </strong>
           </p>
 
         </div>
