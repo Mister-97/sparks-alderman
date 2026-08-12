@@ -5,11 +5,62 @@ import { useSearchParams } from "next/navigation";
 import {
   PayPalScriptProvider,
   PayPalButtons,
+  PayPalCardFieldsProvider,
+  PayPalNameField,
+  PayPalNumberField,
+  PayPalExpiryField,
+  PayPalCVVField,
+  usePayPalCardFields,
 } from "@paypal/react-paypal-js";
 
 const donationTiers = ["$5", "$20", "$50", "$100", "$250"];
 
 type Status = "idle" | "submitting" | "success" | "error";
+
+function CardFieldsEligibilityWatcher({ onIneligible }: { onIneligible: () => void }) {
+  const { cardFieldsForm } = usePayPalCardFields();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!cardFieldsForm) onIneligible();
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [cardFieldsForm, onIneligible]);
+
+  return null;
+}
+
+function CardSubmitButton({
+  onError,
+}: {
+  onError: (message: string) => void;
+}) {
+  const { cardFieldsForm } = usePayPalCardFields();
+  const [submitting, setSubmitting] = useState(false);
+
+  return (
+    <button
+      type="button"
+      disabled={submitting}
+      onClick={async () => {
+        if (!cardFieldsForm) return;
+        setSubmitting(true);
+        try {
+          await cardFieldsForm.submit();
+        } catch {
+          onError(
+            "Your card could not be processed. Please check the details and try again."
+          );
+        } finally {
+          setSubmitting(false);
+        }
+      }}
+      className="mt-4 w-full rounded-md bg-brand-red py-3.5 text-white text-sm font-bold transition-colors duration-300 hover:bg-red-700 disabled:opacity-60"
+    >
+      {submitting ? "PROCESSING..." : "Pay with Card"}
+    </button>
+  );
+}
 
 export default function DonateCard() {
   const searchParams = useSearchParams();
@@ -32,6 +83,7 @@ export default function DonateCard() {
   const [error, setError] = useState("");
   const [donorId, setDonorId] = useState("");
   const [paid, setPaid] = useState(false);
+  const [cardFieldsBroken, setCardFieldsBroken] = useState(false);
 
   useEffect(() => {
     const param = searchParams.get("amount");
@@ -117,8 +169,8 @@ export default function DonateCard() {
         </h2>
         <p className="mt-4 text-sm text-neutral-600 leading-relaxed">
           Complete your contribution of {displayAmount}
-          {" "}({frequency === "monthly" ? "monthly" : "one time"}) securely
-          below with PayPal &mdash; the amount is already set for you.
+          {" "}({frequency === "monthly" ? "monthly" : "one time"}) below
+          &mdash; the amount is already set for you.
         </p>
         <div className="mt-6">
           <PayPalScriptProvider
@@ -126,8 +178,71 @@ export default function DonateCard() {
               clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
               currency: "USD",
               intent: "capture",
+              components: "card-fields,buttons",
             }}
           >
+            {!cardFieldsBroken && (
+              <PayPalCardFieldsProvider
+                createOrder={async () => {
+                  const res = await fetch("/api/paypal/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ donorId }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error);
+                  return data.id;
+                }}
+                onApprove={async (data) => {
+                  const res = await fetch("/api/paypal/capture-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ orderID: data.orderID }),
+                  });
+                  if (res.ok) {
+                    setPaid(true);
+                  } else {
+                    const body = await res.json();
+                    setError(body.error || "Payment could not be completed.");
+                  }
+                }}
+                onError={() => setCardFieldsBroken(true)}
+              >
+                <CardFieldsEligibilityWatcher
+                  onIneligible={() => setCardFieldsBroken(true)}
+                />
+                <p className="text-left text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase mb-2">
+                  Card Number
+                </p>
+                <PayPalNumberField className="rounded-md border border-neutral-300 px-3 py-3" />
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-left text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase mb-2">
+                      Expiry
+                    </p>
+                    <PayPalExpiryField className="rounded-md border border-neutral-300 px-3 py-3" />
+                  </div>
+                  <div>
+                    <p className="text-left text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase mb-2">
+                      CVV
+                    </p>
+                    <PayPalCVVField className="rounded-md border border-neutral-300 px-3 py-3" />
+                  </div>
+                </div>
+                <p className="mt-3 text-left text-[11px] font-bold tracking-[0.14em] text-neutral-500 uppercase mb-2">
+                  Name on Card
+                </p>
+                <PayPalNameField className="rounded-md border border-neutral-300 px-3 py-3" />
+                <CardSubmitButton onError={setError} />
+              </PayPalCardFieldsProvider>
+            )}
+
+            {!cardFieldsBroken && (
+              <p className="my-4 text-center text-[11px] font-bold tracking-wide text-neutral-400">
+                OR
+              </p>
+            )}
+
             <PayPalButtons
               style={{ layout: "vertical", color: "blue", label: "donate" }}
               createOrder={async () => {
