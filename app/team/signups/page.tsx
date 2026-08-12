@@ -100,7 +100,7 @@ export default async function SignupsPage() {
             <p className="text-[11px] font-bold tracking-wide text-neutral-500 uppercase">
               Total Raised
             </p>
-            <p className="mt-1 font-display font-bold text-navy text-xl">
+            <p className="mt-1 font-bold text-navy text-2xl tabular-nums">
               {toDollars(totalPaid)}
             </p>
           </div>
@@ -108,7 +108,7 @@ export default async function SignupsPage() {
             <p className="text-[11px] font-bold tracking-wide text-neutral-500 uppercase">
               Pledged, Unpaid
             </p>
-            <p className="mt-1 font-display font-bold text-navy text-xl">
+            <p className="mt-1 font-bold text-navy text-2xl tabular-nums">
               {toDollars(totalPledgedOnly)}
             </p>
           </div>
@@ -116,7 +116,7 @@ export default async function SignupsPage() {
             <p className="text-[11px] font-bold tracking-wide text-neutral-500 uppercase">
               Paid Donors
             </p>
-            <p className="mt-1 font-display font-bold text-navy text-xl">
+            <p className="mt-1 font-bold text-navy text-2xl tabular-nums">
               {paidDonors.length}
             </p>
           </div>
