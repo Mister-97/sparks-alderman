@@ -11,10 +11,25 @@ function fmt(d: string) {
   });
 }
 
+function toDollars(value: number) {
+  return value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+}
+
+function parseAmount(value: string | null | undefined) {
+  if (!value) return 0;
+  const n = parseFloat(value.replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
 export default async function SignupsPage() {
   const supabase = getSupabaseAdmin();
 
-  const [volunteers, movement, contact, pledges] = await Promise.all([
+  const [volunteers, movement, contact, pledges, allDonors] = await Promise.all([
     supabase
       .from("volunteers")
       .select("*")
@@ -35,7 +50,23 @@ export default async function SignupsPage() {
       .select("*")
       .order("created_at", { ascending: false })
       .limit(100),
+    supabase.from("donors").select("payment_status, amount, paid_amount"),
   ]);
+
+  const paidDonors = (allDonors.data || []).filter(
+    (d) => d.payment_status === "paid"
+  );
+  const pledgedOnlyDonors = (allDonors.data || []).filter(
+    (d) => d.payment_status !== "paid"
+  );
+  const totalPaid = paidDonors.reduce(
+    (sum, d) => sum + parseAmount(d.paid_amount),
+    0
+  );
+  const totalPledgedOnly = pledgedOnlyDonors.reduce(
+    (sum, d) => sum + parseAmount(d.amount),
+    0
+  );
 
   return (
     <div className="p-4 sm:p-8 max-w-6xl space-y-10 sm:space-y-12">
@@ -64,6 +95,32 @@ export default async function SignupsPage() {
           &quot;Status&quot; shows Paid once PayPal confirms the payment
           completed, otherwise Pledged.
         </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4 max-w-xl">
+          <div className="rounded-md border border-neutral-200 bg-white px-4 py-3">
+            <p className="text-[11px] font-bold tracking-wide text-neutral-500 uppercase">
+              Total Raised
+            </p>
+            <p className="mt-1 font-display font-bold text-navy text-xl">
+              {toDollars(totalPaid)}
+            </p>
+          </div>
+          <div className="rounded-md border border-neutral-200 bg-white px-4 py-3">
+            <p className="text-[11px] font-bold tracking-wide text-neutral-500 uppercase">
+              Pledged, Unpaid
+            </p>
+            <p className="mt-1 font-display font-bold text-navy text-xl">
+              {toDollars(totalPledgedOnly)}
+            </p>
+          </div>
+          <div className="rounded-md border border-neutral-200 bg-white px-4 py-3">
+            <p className="text-[11px] font-bold tracking-wide text-neutral-500 uppercase">
+              Paid Donors
+            </p>
+            <p className="mt-1 font-display font-bold text-navy text-xl">
+              {paidDonors.length}
+            </p>
+          </div>
+        </div>
         <div className="bg-white rounded-md border border-neutral-200 overflow-x-auto">
           <table className="w-full text-sm min-w-[1000px]">
             <thead>
