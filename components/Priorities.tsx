@@ -156,7 +156,7 @@ export default function Priorities({ items }: { items: readonly Priority[] }) {
         </motion.div>
 
         {/* Numbered list on the left, ward map standing alongside it */}
-        <div className="mt-12 md:mt-16 grid lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_24rem] gap-10 lg:gap-14 items-start">
+        <div className="mt-12 md:mt-16 grid lg:grid-cols-[minmax(0,1fr)_16rem] xl:grid-cols-[minmax(0,1fr)_19rem] gap-10 lg:gap-14 items-start">
           <div className="border-t border-navy/12">
             {items.map((p, i) => (
               <motion.div
@@ -250,7 +250,7 @@ export default function Priorities({ items }: { items: readonly Priority[] }) {
                   src="/images/ward-map-full.jpg"
                   alt="Chicago city ward map with the 7th Ward highlighted"
                   fill
-                  sizes="(min-width: 1280px) 24rem, 20rem"
+                  sizes="(min-width: 1280px) 19rem, 16rem"
                   className="object-cover"
                 />
               </div>
