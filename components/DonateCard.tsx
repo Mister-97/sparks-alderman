@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import {
+  PayPalScriptProvider,
+  PayPalButtons,
+} from "@paypal/react-paypal-js";
 
 const donationTiers = ["$5", "$20", "$50", "$100", "$250"];
-
-const PAYPAL_DONATE_URL =
-  "https://www.paypal.com/donate/?hosted_button_id=Q52DNDGAFYFPW";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -29,6 +30,8 @@ export default function DonateCard() {
   const [employer, setEmployer] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const [donorId, setDonorId] = useState("");
+  const [paid, setPaid] = useState(false);
 
   useEffect(() => {
     const param = searchParams.get("amount");
@@ -80,6 +83,7 @@ export default function DonateCard() {
         return;
       }
 
+      setDonorId(data.donorId);
       setStatus("success");
     } catch {
       setError("Something went wrong. Please try again.");
@@ -88,10 +92,23 @@ export default function DonateCard() {
   }
 
   if (status === "success") {
-    const numericAmount = (resolvedAmount || "").replace(/[^0-9.]/g, "");
-    const paypalHref = `${PAYPAL_DONATE_URL}${
-      numericAmount ? `&amount=${encodeURIComponent(numericAmount)}` : ""
-    }`;
+    const displayAmount = resolvedAmount?.startsWith("$")
+      ? resolvedAmount
+      : `$${resolvedAmount}`;
+
+    if (paid) {
+      return (
+        <div className="rounded-xl border border-navy/10 bg-white shadow-2xl shadow-navy/20 p-6 sm:p-8 md:p-10 text-center">
+          <h2 className="font-display font-bold text-navy text-2xl md:text-3xl leading-tight">
+            THANK YOU, {firstName.toUpperCase()}!
+          </h2>
+          <p className="mt-4 text-sm text-neutral-600 leading-relaxed">
+            Your contribution of {displayAmount} has been received. Thank you
+            for investing in the future of the 7th Ward.
+          </p>
+        </div>
+      );
+    }
 
     return (
       <div className="rounded-xl border border-navy/10 bg-white shadow-2xl shadow-navy/20 p-6 sm:p-8 md:p-10 text-center">
@@ -99,25 +116,60 @@ export default function DonateCard() {
           THANK YOU, {firstName.toUpperCase()}!
         </h2>
         <p className="mt-4 text-sm text-neutral-600 leading-relaxed">
-          We&apos;ve got your pledge of {resolvedAmount?.startsWith("$") ? resolvedAmount : `$${resolvedAmount}`}
-          {" "}({frequency === "monthly" ? "monthly" : "one time"}). One last
-          step, complete your contribution securely through PayPal below
-          (you&apos;ll enter the amount again on PayPal&apos;s page).
+          Complete your contribution of {displayAmount}
+          {" "}({frequency === "monthly" ? "monthly" : "one time"}) securely
+          below with PayPal &mdash; the amount is already set for you.
         </p>
-        <a
-          href={paypalHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6 inline-block w-full rounded-md bg-brand-red py-3.5 text-white text-sm font-bold transition-colors duration-300 hover:bg-red-700"
-        >
-          Complete Donation via PayPal
-        </a>
-        {frequency === "monthly" && (
-          <p className="mt-3 text-[11px] text-neutral-400 leading-relaxed">
-            For monthly gifts, choose the recurring option on the PayPal
-            page.
-          </p>
-        )}
+        <div className="mt-6">
+          <PayPalScriptProvider
+            options={{
+              clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
+              currency: "USD",
+              intent: "capture",
+            }}
+          >
+            <PayPalButtons
+              style={{ layout: "vertical", color: "blue", label: "donate" }}
+              createOrder={async () => {
+                const res = await fetch("/api/paypal/create-order", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ donorId }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                return data.id;
+              }}
+              onApprove={async (data) => {
+                const res = await fetch("/api/paypal/capture-order", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ orderID: data.orderID }),
+                });
+                if (res.ok) {
+                  setPaid(true);
+                } else {
+                  const body = await res.json();
+                  setError(body.error || "Payment could not be completed.");
+                }
+              }}
+              onError={() => {
+                setError(
+                  "PayPal ran into a problem. Please try again or contact us."
+                );
+              }}
+            />
+          </PayPalScriptProvider>
+          {error && (
+            <p className="mt-4 text-sm text-red-600 font-semibold">{error}</p>
+          )}
+          {frequency === "monthly" && (
+            <p className="mt-3 text-[11px] text-neutral-400 leading-relaxed">
+              This charges {displayAmount} now. A member of Team Sparks will
+              follow up to set up your recurring monthly gift.
+            </p>
+          )}
+        </div>
       </div>
     );
   }
@@ -241,9 +293,9 @@ export default function DonateCard() {
         </button>
 
         <p className="mt-5 text-center text-[11px] text-neutral-400 leading-relaxed">
-          After submitting, you&apos;ll be sent to PayPal to complete your
-          contribution securely. Contributions to Samuel Sparks for 7th Ward
-          Alderman are not tax deductible.
+          After submitting, you&apos;ll complete your contribution securely
+          with PayPal. Contributions to Samuel Sparks for 7th Ward Alderman
+          are not tax deductible.
         </p>
       </form>
     );

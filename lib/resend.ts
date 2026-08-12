@@ -215,6 +215,51 @@ export function donorConfirmationEmail(firstName: string, amount: string, freque
   );
 }
 
+export function donorPaymentReceivedTeamEmail(d: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  amount: string;
+  frequency: string;
+  captureId: string;
+}) {
+  return wrap(
+    "Donation Payment Received",
+    `
+    <table style="width:100%;border-collapse:collapse;">
+      ${row("Name", `${d.firstName} ${d.lastName}`)}
+      ${row("Amount Paid", `${d.amount} (${d.frequency})`)}
+      ${row("Email", d.email)}
+      ${row("PayPal Capture ID", d.captureId)}
+    </table>
+    `
+  );
+}
+
+export function donorPaymentReceivedConfirmationEmail(
+  firstName: string,
+  amount: string,
+  frequency: string
+) {
+  return wrap(
+    "Thank You for Your Contribution!",
+    `
+    <p style="font-size:14px;color:#374151;line-height:1.6;">
+      Hi ${firstName},
+    </p>
+    <p style="font-size:14px;color:#374151;line-height:1.6;">
+      Your contribution of ${amount} (${frequency.toLowerCase()}) to Samuel
+      Sparks for 7th Ward Alderman has been received. Thank you for investing
+      in the future of the 7th Ward.
+    </p>
+    <p style="font-size:14px;color:#374151;line-height:1.6;">
+      Contributions to Samuel Sparks for 7th Ward Alderman are not tax
+      deductible.
+    </p>
+    `
+  );
+}
+
 export function contactTeamEmail(c: {
   firstName?: string;
   lastName?: string;

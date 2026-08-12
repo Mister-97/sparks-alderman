@@ -51,20 +51,24 @@ export async function POST(req: NextRequest) {
 
   const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase.from("donors").insert({
-    first_name: body.firstName,
-    last_name: body.lastName,
-    email: body.email,
-    phone: body.phone,
-    street_address: body.streetAddress,
-    city: body.city,
-    state: body.state,
-    zip_code: body.zipCode,
-    occupation: body.occupation,
-    employer: body.employer,
-    frequency: body.frequency,
-    amount: body.amount,
-  });
+  const { data: donor, error } = await supabase
+    .from("donors")
+    .insert({
+      first_name: body.firstName,
+      last_name: body.lastName,
+      email: body.email,
+      phone: body.phone,
+      street_address: body.streetAddress,
+      city: body.city,
+      state: body.state,
+      zip_code: body.zipCode,
+      occupation: body.occupation,
+      employer: body.employer,
+      frequency: body.frequency,
+      amount: body.amount,
+    })
+    .select("id")
+    .single();
 
   if (error) {
     console.error("donor insert failed", error);
@@ -100,5 +104,5 @@ export async function POST(req: NextRequest) {
     }),
   ]);
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, donorId: donor.id });
 }

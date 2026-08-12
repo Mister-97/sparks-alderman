@@ -60,16 +60,16 @@ export default async function SignupsPage() {
         </div>
         <p className="text-neutral-500 text-xs mb-3 max-w-lg">
           Submitted via the /donate form. Includes the compliance fields
-          (occupation, employer) required for individual contributions. After
-          submitting, the donor is sent to PayPal to complete payment, check
-          your PayPal account to confirm which of these actually came
-          through.
+          (occupation, employer) required for individual contributions.
+          &quot;Status&quot; shows Paid once PayPal confirms the payment
+          completed, otherwise Pledged.
         </p>
         <div className="bg-white rounded-md border border-neutral-200 overflow-x-auto">
           <table className="w-full text-sm min-w-[1000px]">
             <thead>
               <tr className="bg-neutral-50 text-left text-xs font-bold tracking-wide text-neutral-500 uppercase">
                 <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Amount</th>
                 <th className="px-4 py-3">Frequency</th>
@@ -84,10 +84,23 @@ export default async function SignupsPage() {
               {(pledges.data || []).map((p) => (
                 <tr key={p.id} className="border-t border-neutral-100">
                   <td className="px-4 py-3 text-neutral-500 whitespace-nowrap">{fmt(p.created_at)}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span
+                      className={`inline-block rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                        p.payment_status === "paid"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-neutral-100 text-neutral-500"
+                      }`}
+                    >
+                      {p.payment_status === "paid" ? "Paid" : "Pledged"}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 font-semibold text-navy whitespace-nowrap">
                     {p.first_name} {p.last_name}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">{p.amount}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {p.payment_status === "paid" ? p.paid_amount : p.amount}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap">{p.frequency}</td>
                   <td className="px-4 py-3 whitespace-nowrap">{p.email}</td>
                   <td className="px-4 py-3 whitespace-nowrap">{p.phone}</td>
@@ -100,7 +113,7 @@ export default async function SignupsPage() {
               ))}
               {!pledges.data?.length && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-6 text-center text-neutral-400">
+                  <td colSpan={10} className="px-4 py-6 text-center text-neutral-400">
                     No pledges yet.
                   </td>
                 </tr>
