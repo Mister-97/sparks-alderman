@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import {
   sendEmail,
   contactTeamEmail,
@@ -14,6 +15,14 @@ const TEAM_EMAIL = (
   .map((e) => e.trim());
 
 export async function POST(req: NextRequest) {
+  const { allowed } = rateLimit(`contact:${getClientIp(req)}`, 5, 10 * 60 * 1000);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const body = await req.json();
 
   if (!body.address || String(body.address).trim() === "") {
